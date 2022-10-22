@@ -2,16 +2,13 @@ package me.drex.orderedplayerlist.util;
 
 import me.drex.orderedplayerlist.OrderedPlayerList;
 import me.drex.orderedplayerlist.config.ConfigManager;
-import me.lucko.fabric.api.permissions.v0.Options;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
 import net.fabricmc.loader.api.FabricLoader;
-import net.minecraft.ChatFormatting;
 import net.minecraft.network.protocol.game.ClientboundSetPlayerTeamPacket;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.players.PlayerList;
-import net.minecraft.world.scores.Team;
 
 import java.util.*;
 
@@ -37,8 +34,7 @@ public class OrderedPlayerListManager {
         }
     }
 
-    private void updateChanged(PlayerList playerList) {
-        cleanInvalidEntries(playerList);
+    private synchronized void updateChanged(PlayerList playerList) {
         if (playerListEntries.size() <= 1) {
             for (PlayerListEntry playerListEntry : playerListEntries) {
                 ServerPlayer player = playerList.getPlayer(playerListEntry.uuid());
@@ -78,12 +74,7 @@ public class OrderedPlayerListManager {
         }
     }
 
-    private void cleanInvalidEntries(PlayerList playerList) {
-        playerListEntries.removeIf(playerListEntry -> playerList.getPlayer(playerListEntry.uuid()) == null);
-    }
-
-    private void onJoin(ServerPlayer player) {
-        cleanInvalidEntries(player.getServer().getPlayerList());
+    private synchronized void onJoin(ServerPlayer player) {
         for (PlayerListEntry playerListEntry : playerListEntries) {
             player.connection.send(playerListEntry.addPacket());
         }
@@ -93,7 +84,7 @@ public class OrderedPlayerListManager {
         player.connection.send(playerListEntry.addPacket());
     }
 
-    private void onDisconnect(ServerPlayer player) {
+    private synchronized void onDisconnect(ServerPlayer player) {
         Optional<PlayerListEntry> optional = getEntry(player);
         if (optional.isPresent()) {
             playerListEntries.remove(optional.get());
@@ -127,11 +118,11 @@ public class OrderedPlayerListManager {
         return Optional.empty();
     }
 
-    public PlayerListEntry addEntry(ServerPlayer player) {
+    private PlayerListEntry addEntry(ServerPlayer player) {
         // Special case
         if (playerListEntries.isEmpty()) {
             long weight = Long.MAX_VALUE / 2;
-            PlayerListEntry playerListEntry = new PlayerListEntry(player.getUUID(), weight, createDummyTeam(player, weight));
+            PlayerListEntry playerListEntry = new PlayerListEntry(player.getUUID(), weight, new DummyTeam(player, weight));
             playerListEntries.add(playerListEntry);
             return playerListEntry;
         }
@@ -153,40 +144,9 @@ public class OrderedPlayerListManager {
         long nextWeight = index == playerListEntries.size() ? Long.MAX_VALUE : playerListEntries.get(index).weight();
         // Place the new weight in between
         long weight = (nextWeight / 2 + previousWeight / 2);
-        PlayerListEntry playerListEntry = new PlayerListEntry(player.getUUID(), weight, createDummyTeam(player, weight));
+        PlayerListEntry playerListEntry = new PlayerListEntry(player.getUUID(), weight, new DummyTeam(player, weight));
         playerListEntries.add(index, playerListEntry);
         return playerListEntry;
-    }
-
-    private static DummyTeam createDummyTeam(ServerPlayer player, long weight) {
-        String name = String.format("%019d", weight);
-        DummyTeam team = new DummyTeam(name);
-        modifyTeam(player, team);
-        team.getPlayers().add(player.getScoreboardName());
-        return team;
-    }
-
-    private static boolean modifyTeam(ServerPlayer player, DummyTeam team) {
-        boolean modified = false;
-        ChatFormatting formatting = Options.get(player, "color", ChatFormatting.RESET, ChatFormatting::getByName);
-        if (!formatting.equals(team.getColor())) {
-            modified = true;
-            team.setColor(formatting);
-        }
-        boolean collision = Options.get(player, "collision", true, Boolean::parseBoolean);
-        Team.CollisionRule collisionRule = collision ? Team.CollisionRule.ALWAYS : Team.CollisionRule.NEVER;
-        if (!collisionRule.equals(team.getCollisionRule())) {
-            modified = true;
-            team.setCollisionRule(collisionRule);
-        }
-        boolean nameTagVisible = Options.get(player, "nameTagVisible", true, Boolean::parseBoolean);
-        Team.Visibility visibility = nameTagVisible ? Team.Visibility.ALWAYS : Team.Visibility.NEVER;
-        if (!visibility.equals(team.getNameTagVisibility())) {
-            modified = true;
-            team.setNameTagVisibility(visibility);
-        }
-        return modified;
-
     }
 
     record PlayerListEntry(UUID uuid, long weight, DummyTeam team) {
@@ -200,7 +160,7 @@ public class OrderedPlayerListManager {
         }
 
         Optional<ClientboundSetPlayerTeamPacket> modifyPacket(ServerPlayer player) {
-            return modifyTeam(player, team()) ? Optional.of(ClientboundSetPlayerTeamPacket.createAddOrModifyPacket(team(), false)) : Optional.empty();
+            return team().update(player) ? Optional.of(ClientboundSetPlayerTeamPacket.createAddOrModifyPacket(team(), false)) : Optional.empty();
         }
 
         @Override
