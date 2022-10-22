@@ -17,6 +17,7 @@ public class OrderedPlayerListManager {
     public static final OrderedPlayerListManager MANAGER = new OrderedPlayerListManager();
     public static final boolean VANISH = FabricLoader.getInstance().isModLoaded("melius-vanish");
     private final List<PlayerListEntry> playerListEntries = new ArrayList<>();
+    private final Random random = new Random();
 
     private OrderedPlayerListManager() {
     }
@@ -42,11 +43,11 @@ public class OrderedPlayerListManager {
             }
         } else {
             Comparator<ServerPlayer> comparator = ConfigManager.INSTANCE.config.comparator;
-            List<PlayerListEntry> shuffledEntries = new ArrayList<>(playerListEntries);
             // Checking order needs to be randomized, or we may run out of space between team ids during constant back and forth swapping
-            Collections.shuffle(shuffledEntries);
-            for (PlayerListEntry playerListEntry : shuffledEntries) {
-                int index = playerListEntries.indexOf(playerListEntry);
+            int offset = random.nextInt(playerListEntries.size());
+            for (int i = 0; i < playerListEntries.size(); i++) {
+                int index = (i + offset) % playerListEntries.size();
+                PlayerListEntry playerListEntry = playerListEntries.get(index);
                 boolean incorrect;
                 ServerPlayer player = playerList.getPlayer(playerListEntry.uuid());
                 if (index == 0) {
