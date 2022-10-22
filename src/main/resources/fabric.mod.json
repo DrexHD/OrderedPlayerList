@@ -1,0 +1,34 @@
+{
+  "schemaVersion": 1,
+  "id": "orderedplayerlist",
+  "version": "${version}",
+
+  "name": "Ordered Player List",
+  "description": "Order player list based on player permission weights",
+  "authors": [
+    "Drex"
+  ],
+  "license": "MIT",
+  "environment": "*",
+  "entrypoints": {
+    "server": [
+      "me.drex.orderedplayerlist.OrderedPlayerList"
+    ],
+    "preLaunch": [
+      "com.llamalad7.mixinextras.MixinExtrasBootstrap::init"
+    ]
+  },
+  "mixins": [
+    "orderedplayerlist.mixins.json"
+  ],
+
+  "depends": {
+    "fabricloader": ">=0.14.9",
+    "fabric-api": "*",
+    "minecraft": "~1.19",
+    "java": ">=17"
+  },
+  "suggests": {
+    "luckperms": "*"
+  }
+}
