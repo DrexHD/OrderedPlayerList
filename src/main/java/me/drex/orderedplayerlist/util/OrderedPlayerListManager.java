@@ -1,21 +1,19 @@
 package me.drex.orderedplayerlist.util;
 
 import me.drex.orderedplayerlist.OrderedPlayerList;
-import me.drex.orderedplayerlist.config.ConfigManager;
+import me.drex.orderedplayerlist.config.Config;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
-import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
-import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.network.protocol.game.ClientboundSetPlayerTeamPacket;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.players.PlayerList;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 
 public class OrderedPlayerListManager {
 
     public static final OrderedPlayerListManager MANAGER = new OrderedPlayerListManager();
-    public static final boolean VANISH = FabricLoader.getInstance().isModLoaded("melius-vanish");
     private final List<PlayerListEntry> playerListEntries = new ArrayList<>();
     private final Random random = new Random();
 
@@ -24,13 +22,10 @@ public class OrderedPlayerListManager {
 
     public void init() {
         ServerTickEvents.START_SERVER_TICK.register(this::onTick);
-        ServerPlayConnectionEvents.JOIN.register((handler, sender, server) -> onJoin(handler.getPlayer()));
-        ServerPlayConnectionEvents.DISCONNECT.register((handler, server) -> onDisconnect(handler.getPlayer()));
-        //if (VANISH) VanishEvents.VANISH_EVENT.register(this::onVanishEvent);
     }
 
     private void onTick(MinecraftServer server) {
-        if (ConfigManager.INSTANCE.config.updateRate > 0 && server.getTickCount() % ConfigManager.INSTANCE.config.updateRate == 0) {
+        if (Config.INSTANCE.updateRate > 0 && server.getTickCount() % Config.INSTANCE.updateRate == 0) {
             updateChanged(server.getPlayerList());
         }
     }
@@ -38,27 +33,26 @@ public class OrderedPlayerListManager {
     private synchronized void updateChanged(PlayerList playerList) {
         if (playerListEntries.size() <= 1) {
             for (PlayerListEntry playerListEntry : playerListEntries) {
-                ServerPlayer player = playerList.getPlayer(playerListEntry.uuid());
-                playerListEntry.modifyPacket(player).ifPresent(playerList::broadcastAll);
+                playerListEntry.modifyPacket(playerListEntry.player(playerList)).ifPresent(playerList::broadcastAll);
             }
         } else {
-            Comparator<ServerPlayer> comparator = ConfigManager.INSTANCE.config.comparator;
+            Comparator<ServerPlayer> comparator = Config.INSTANCE.order.comparator();
             // Checking order needs to be randomized, or we may run out of space between team ids during constant back and forth swapping
             int offset = random.nextInt(playerListEntries.size());
             for (int i = 0; i < playerListEntries.size(); i++) {
                 int index = (i + offset) % playerListEntries.size();
                 PlayerListEntry playerListEntry = playerListEntries.get(index);
                 boolean incorrect;
-                ServerPlayer player = playerList.getPlayer(playerListEntry.uuid());
+                ServerPlayer player = playerListEntry.player(playerList);
                 if (index == 0) {
                     // First entry is greater than the second
                     PlayerListEntry entry = playerListEntries.get(index + 1);
-                    ServerPlayer other = playerList.getPlayer(entry.uuid());
+                    ServerPlayer other = entry.player(playerList);
                     incorrect = comparator.compare(player, other) > 0;
                 } else {
                     // Entry is smaller than the previous entry
                     PlayerListEntry entry = playerListEntries.get(index - 1);
-                    ServerPlayer other = playerList.getPlayer(entry.uuid());
+                    ServerPlayer other = entry.player(playerList);
                     incorrect = comparator.compare(player, other) < 0;
                 }
                 if (incorrect) {
@@ -75,17 +69,18 @@ public class OrderedPlayerListManager {
         }
     }
 
-    private synchronized void onJoin(ServerPlayer player) {
+    public synchronized void onJoin(ServerPlayer player) {
+        PlayerList playerList = player.getServer().getPlayerList();
         for (PlayerListEntry playerListEntry : playerListEntries) {
             player.connection.send(playerListEntry.addPacket());
         }
         PlayerListEntry playerListEntry = addEntry(player);
-        player.getServer().getPlayerList().broadcastAll(playerListEntry.addPacket());
+        playerList.broadcastAll(playerListEntry.addPacket());
         // Joining player has not yet been added to the player list
         player.connection.send(playerListEntry.addPacket());
     }
 
-    private synchronized void onDisconnect(ServerPlayer player) {
+    public synchronized void onDisconnect(ServerPlayer player) {
         Optional<PlayerListEntry> optional = getEntry(player);
         if (optional.isPresent()) {
             playerListEntries.remove(optional.get());
@@ -94,21 +89,6 @@ public class OrderedPlayerListManager {
             OrderedPlayerList.LOGGER.warn("Player {} left, but had no dummy team associated to them", player.getScoreboardName());
         }
     }
-
-    // TODO: Uncomment this and only send join / leave packets if players can see the vanished player
-    /*private void onVanishEvent(ServerPlayer player, boolean vanish) {
-        Optional<PlayerListEntry> optional = getEntry(player);
-        if (optional.isPresent()) {
-            ClientboundSetPlayerTeamPacket packet = vanish ? optional.get().removePacket() : optional.get().addPacket();
-            for (ServerPlayer serverPlayer : player.getServer().getPlayerList().getPlayers()) {
-                if (!Permissions.check(serverPlayer, "vanish.feature.view") && !player.equals(serverPlayer)) {
-                    serverPlayer.connection.send(packet);
-                }
-            }
-        } else {
-            OrderedPlayerList.LOGGER.warn("Player {} {}, but had no dummy team associated to them", player.getScoreboardName(), vanish ? "vanished" : "unvanished");
-        }
-    }*/
 
     private Optional<PlayerListEntry> getEntry(ServerPlayer player) {
         for (PlayerListEntry playerListEntry : playerListEntries) {
@@ -128,13 +108,12 @@ public class OrderedPlayerListManager {
             return playerListEntry;
         }
 
-        Comparator<ServerPlayer> comparator = ConfigManager.INSTANCE.config.comparator;
+        Comparator<ServerPlayer> comparator = Config.INSTANCE.order.comparator();
         PlayerList playerList = player.getServer().getPlayerList();
         int index = 0;
         while (index < playerListEntries.size()) {
             PlayerListEntry playerListEntry = playerListEntries.get(index);
-            ServerPlayer other = playerList.getPlayer(playerListEntry.uuid());
-            if (comparator.compare(player, other) > 0) {
+            if (comparator.compare(player, playerListEntry.player(playerList)) > 0) {
                 index++;
             } else {
                 break;
@@ -162,6 +141,11 @@ public class OrderedPlayerListManager {
 
         Optional<ClientboundSetPlayerTeamPacket> modifyPacket(ServerPlayer player) {
             return team().update(player) ? Optional.of(ClientboundSetPlayerTeamPacket.createAddOrModifyPacket(team(), false)) : Optional.empty();
+        }
+
+        @NotNull
+        ServerPlayer player(PlayerList playerList) {
+            return Objects.requireNonNull(playerList.getPlayer(uuid()), "Player List Entry is not present in PlayerList");
         }
 
         @Override

@@ -9,7 +9,6 @@ group = project.maven_group
 repositories {
     maven { url 'https://oss.sonatype.org/content/repositories/snapshots' } // fabric-permissions-api
     maven { url 'https://jitpack.io' } // MixinExtras
-    maven { url "https://api.modrinth.com/maven" } // vanish
     maven { url "https://maven.nucleoid.xyz/" } // placeholder-api
 }
 
@@ -23,13 +22,11 @@ dependencies {
     annotationProcessor("com.github.LlamaLad7:MixinExtras:${project.mixin_extras_version}")
 
     modImplementation "me.lucko:fabric-permissions-api:${project.permission_api_version}"
-    modImplementation "maven.modrinth:vanish:${project.vanish_version}"
     modImplementation include("eu.pb4:placeholder-api:${project.placeholder_api_version}")
 
     // Fabric API
     Set<String> apiModules = [
             'fabric-command-api-v2',
-            'fabric-entity-events-v1',
             'fabric-lifecycle-events-v1',
             'fabric-networking-api-v1'
     ]

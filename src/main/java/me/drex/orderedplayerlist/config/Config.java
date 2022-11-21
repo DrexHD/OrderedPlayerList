@@ -1,41 +1,24 @@
 package me.drex.orderedplayerlist.config;
 
-import com.google.common.collect.ComparisonChain;
-import me.drex.orderedplayerlist.OrderedPlayerList;
-import net.minecraft.server.level.ServerPlayer;
+import me.drex.orderedplayerlist.config.sequence.MetadataSequence;
+import me.drex.orderedplayerlist.config.sequence.PlaceholderSequence;
+import me.drex.orderedplayerlist.config.sequence.util.ComparisonMode;
+import me.drex.orderedplayerlist.config.sequence.util.PlayerComparator;
+import net.minecraft.resources.ResourceLocation;
 
-import java.util.*;
+import java.util.ArrayList;
 
 public class Config {
 
-    public final boolean debug;
-    public final int updateRate;
-    public final Comparator<ServerPlayer> comparator;
-    protected final boolean failed;
+    public static Config INSTANCE = new Config();
 
-    public Config(ConfigData data) {
-        debug = data.debug;
-        updateRate = data.updateRate;
-        boolean failed = false;
-        List<Comparator<ServerPlayer>> comparators = new LinkedList<>();
-        for (Map.Entry<String, String> entry : data.ordering.entrySet()) {
-            try {
-                comparators.add(OrderLookup.getComparator(entry.getKey(), entry.getValue()));
-            } catch (Exception e) {
-                failed = true;
-                OrderedPlayerList.LOGGER.error("Order entry with id \"{}\" could not be parsed, ignoring", entry.getKey(), e);
-            }
-        }
-        this.failed = failed;
-
-        comparator = (o1, o2) -> {
-            ComparisonChain comparisonChain = ComparisonChain.start();
-            for (Comparator<ServerPlayer> playerComparator : comparators) {
-                comparisonChain = comparisonChain.compare(o1, o2, playerComparator);
-            }
-            return comparisonChain.result();
-        };
-    }
-
+    public int updateRate = 5;
+    public PlayerComparator order = new PlayerComparator(new ArrayList<>() {{
+        add(new MetadataSequence("weight", true, ComparisonMode.INTEGER));
+        add(new PlaceholderSequence(new ResourceLocation("player:statistic"), "play_time", true, ComparisonMode.INTEGER));
+        add(new PlaceholderSequence(new ResourceLocation("player:pos_y"), null, false, ComparisonMode.DOUBLE));
+        add(new PlaceholderSequence(new ResourceLocation("player:statistic"), "deaths", false, ComparisonMode.INTEGER));
+        add(new PlaceholderSequence(new ResourceLocation("player:name"), null, false, ComparisonMode.STRING));
+    }});
 
 }

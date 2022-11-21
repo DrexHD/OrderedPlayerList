@@ -17,7 +17,7 @@ public abstract class ServerScoreboardMixin {
                     target = "Lnet/minecraft/server/players/PlayerList;broadcastAll(Lnet/minecraft/network/protocol/Packet;)V"
             )
     )
-    public void ordered_playerlist$hideVanillaTeams(PlayerList list, Packet<?> packet) {
+    public void orderedPlayerList_hideVanillaTeams(PlayerList list, Packet<?> packet) {
         // no-op
     }
 

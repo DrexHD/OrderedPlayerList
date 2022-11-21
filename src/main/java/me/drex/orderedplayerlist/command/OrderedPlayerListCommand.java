@@ -1,5 +1,6 @@
 package me.drex.orderedplayerlist.command;
 
+import com.mojang.brigadier.Command;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.context.CommandContext;
 import me.drex.orderedplayerlist.config.ConfigManager;
@@ -19,9 +20,9 @@ public class OrderedPlayerListCommand {
     }
 
     public static int reload(CommandContext<CommandSourceStack> ctx) {
-        if (ConfigManager.INSTANCE.load()) {
+        if (ConfigManager.load()) {
             ctx.getSource().sendSuccess(Component.literal("Reloaded Ordered Player List config"), false);
-            return 1;
+            return Command.SINGLE_SUCCESS;
         } else {
             ctx.getSource().sendFailure(Component.literal("Something went wrong, while reloading the config! Check the console for more information!"));
             return 0;

@@ -18,7 +18,7 @@ public abstract class PlayerTeamMixin {
                     target = "Lnet/minecraft/world/scores/Scoreboard;onTeamChanged(Lnet/minecraft/world/scores/PlayerTeam;)V"
             )
     )
-    public void ordered_playerlist$preventDummyTeamScoreboard(Scoreboard scoreboard, PlayerTeam team, Operation<Void> original) {
+    public void orderedPlayerList_preventDummyTeamScoreboard(Scoreboard scoreboard, PlayerTeam team, Operation<Void> original) {
         if (!((Object) this instanceof DummyTeam)) {
             original.call(scoreboard, team);
         }
