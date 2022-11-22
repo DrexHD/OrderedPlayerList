@@ -1,7 +1,9 @@
 package me.drex.orderedplayerlist.util;
 
+import eu.pb4.placeholders.api.TextParserUtils;
 import me.lucko.fabric.api.permissions.v0.Options;
 import net.minecraft.ChatFormatting;
+import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.scores.PlayerTeam;
 import net.minecraft.world.scores.Scoreboard;
@@ -45,6 +47,16 @@ public class DummyTeam extends PlayerTeam {
         if (!visibility.equals(getNameTagVisibility())) {
             modified = true;
             setNameTagVisibility(visibility);
+        }
+        Component prefix = Options.get(player, "prefix", Component.empty(), TextParserUtils::formatText);
+        if (!prefix.equals(getPlayerPrefix())) {
+            modified = true;
+            setPlayerPrefix(prefix);
+        }
+        Component suffix = Options.get(player, "suffix", Component.empty(), TextParserUtils::formatText);
+        if (!suffix.equals(getPlayerSuffix())) {
+            modified = true;
+            setPlayerSuffix(suffix);
         }
         return modified;
     }
