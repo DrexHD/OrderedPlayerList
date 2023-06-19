@@ -21,7 +21,7 @@ public class OrderedPlayerListCommand {
 
     public static int reload(CommandContext<CommandSourceStack> ctx) {
         if (ConfigManager.load()) {
-            ctx.getSource().sendSuccess(Component.literal("Reloaded Ordered Player List config"), false);
+            ctx.getSource().sendSuccess(() -> Component.literal("Reloaded Ordered Player List config"), false);
             return Command.SINGLE_SUCCESS;
         } else {
             ctx.getSource().sendFailure(Component.literal("Something went wrong, while reloading the config! Check the console for more information!"));

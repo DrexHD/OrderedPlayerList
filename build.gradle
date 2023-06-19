@@ -18,8 +18,7 @@ dependencies {
     mappings loom.officialMojangMappings()
     modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
 
-    implementation include("com.github.LlamaLad7:MixinExtras:${project.mixin_extras_version}")
-    annotationProcessor("com.github.LlamaLad7:MixinExtras:${project.mixin_extras_version}")
+    include(implementation(annotationProcessor("com.github.llamalad7.mixinextras:mixinextras-fabric:${project.mixin_extras_version}")))
 
     modImplementation "me.lucko:fabric-permissions-api:${project.permission_api_version}"
     modImplementation include("eu.pb4:placeholder-api:${project.placeholder_api_version}")
@@ -31,7 +30,7 @@ dependencies {
             'fabric-networking-api-v1'
     ]
     apiModules.forEach {
-        include(modImplementation(fabricApi.module(it, project.fabric_version)))
+        modImplementation(fabricApi.module(it, project.fabric_version))
     }
 }
 
