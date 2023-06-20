@@ -5,6 +5,10 @@
 {
   // Every how many ticks order changes should be checked and updated
   "updateRate": 5,
+  // Display prefix metadata above the player
+  "displayPrefix": true,
+  // Display suffix metadata above the player
+  "displaySuffix": true,
   // A list of comparisons, applied top to bottom.
   // In this example, rank weight will be checked first, then people with same rank weight will be sorted by playtime...
   "order": [

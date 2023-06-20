@@ -13,6 +13,11 @@ public class Config {
     public static Config INSTANCE = new Config();
 
     public int updateRate = 5;
+
+    public boolean displayPrefix = true;
+
+    public boolean displaySuffix = true;
+
     public PlayerComparator order = new PlayerComparator(new ArrayList<>() {{
         add(new MetadataSequence("weight", true, ComparisonMode.INTEGER));
         add(new PlaceholderSequence(new ResourceLocation("player:statistic"), "play_time", true, ComparisonMode.INTEGER));

@@ -1,6 +1,7 @@
 package me.drex.orderedplayerlist.util;
 
 import eu.pb4.placeholders.api.TextParserUtils;
+import me.drex.orderedplayerlist.config.Config;
 import me.lucko.fabric.api.permissions.v0.Options;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
@@ -48,15 +49,19 @@ public class DummyTeam extends PlayerTeam {
             modified = true;
             setNameTagVisibility(visibility);
         }
-        Component prefix = Options.get(player, "prefix", Component.empty(), TextParserUtils::formatText);
-        if (!prefix.equals(getPlayerPrefix())) {
-            modified = true;
-            setPlayerPrefix(prefix);
+        if (Config.INSTANCE.displayPrefix) {
+            Component prefix = Options.get(player, "prefix", Component.empty(), TextParserUtils::formatText);
+            if (!prefix.equals(getPlayerPrefix())) {
+                modified = true;
+                setPlayerPrefix(prefix);
+            }
         }
-        Component suffix = Options.get(player, "suffix", Component.empty(), TextParserUtils::formatText);
-        if (!suffix.equals(getPlayerSuffix())) {
-            modified = true;
-            setPlayerSuffix(suffix);
+        if (Config.INSTANCE.displaySuffix) {
+            Component suffix = Options.get(player, "suffix", Component.empty(), TextParserUtils::formatText);
+            if (!suffix.equals(getPlayerSuffix())) {
+                modified = true;
+                setPlayerSuffix(suffix);
+            }
         }
         return modified;
     }
