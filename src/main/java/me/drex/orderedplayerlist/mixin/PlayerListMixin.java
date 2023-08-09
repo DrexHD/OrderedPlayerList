@@ -26,7 +26,7 @@ public abstract class PlayerListMixin {
             slice = @Slice(
                     to = @At(
                             value = "INVOKE",
-                            target = "Lnet/minecraft/server/ServerScoreboard;getDisplayObjective(I)Lnet/minecraft/world/scores/Objective;"
+                            target = "Lnet/minecraft/server/ServerScoreboard;getDisplayObjective(Lnet/minecraft/world/scores/DisplaySlot;)Lnet/minecraft/world/scores/Objective;"
                     )
             )
     )
@@ -34,8 +34,15 @@ public abstract class PlayerListMixin {
         // no-op
     }
 
-    @Inject(method = "placeNewPlayer", at = @At(value = "INVOKE", target = "Ljava/util/Map;put(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;", shift = At.Shift.AFTER))
-    public void orderedPlayerList_onPutPlayer(Connection connection, ServerPlayer player, CallbackInfo ci) {
+    @Inject(
+        method = "placeNewPlayer",
+        at = @At(
+            value = "INVOKE",
+            target = "Ljava/util/Map;put(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;",
+            shift = At.Shift.AFTER
+        )
+    )
+    public void orderedPlayerList_onPutPlayer(Connection connection, ServerPlayer player, int i, CallbackInfo ci) {
         OrderedPlayerListManager.MANAGER.onJoin(player);
     }
 
