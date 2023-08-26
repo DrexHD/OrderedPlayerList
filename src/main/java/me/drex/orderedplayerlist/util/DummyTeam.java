@@ -49,6 +49,11 @@ public class DummyTeam extends PlayerTeam {
             modified = true;
             setNameTagVisibility(visibility);
         }
+        boolean seeFriendlyInvisibles = Options.get(player, "seeFriendlyInvisibles", false, Boolean::parseBoolean);
+        if (seeFriendlyInvisibles != canSeeFriendlyInvisibles()) {
+            modified = true;
+            setSeeFriendlyInvisibles(seeFriendlyInvisibles);
+        }
         if (Config.INSTANCE.displayPrefix) {
             Component prefix = Options.get(player, "prefix", Component.empty(), TextParserUtils::formatText);
             if (!prefix.equals(getPlayerPrefix())) {
