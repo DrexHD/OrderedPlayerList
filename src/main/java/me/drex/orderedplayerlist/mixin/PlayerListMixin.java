@@ -4,6 +4,7 @@ import me.drex.orderedplayerlist.util.OrderedPlayerListManager;
 import net.minecraft.network.Connection;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.server.network.CommonListenerCookie;
 import net.minecraft.server.network.ServerGamePacketListenerImpl;
 import net.minecraft.server.players.PlayerList;
 import org.spongepowered.asm.mixin.Mixin;
@@ -42,7 +43,7 @@ public abstract class PlayerListMixin {
             shift = At.Shift.AFTER
         )
     )
-    public void orderedPlayerList_onPutPlayer(Connection connection, ServerPlayer player, int i, CallbackInfo ci) {
+    public void orderedPlayerList_onPutPlayer(Connection connection, ServerPlayer player, CommonListenerCookie cookie, CallbackInfo ci) {
         OrderedPlayerListManager.MANAGER.onJoin(player);
     }
 
