@@ -4,6 +4,7 @@ import me.drex.orderedplayerlist.util.OrderedPlayerListManager;
 import net.minecraft.network.Connection;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.server.network.CommonListenerCookie;
 import net.minecraft.server.network.ServerGamePacketListenerImpl;
 import net.minecraft.server.players.PlayerList;
 import org.spongepowered.asm.mixin.Mixin;
@@ -26,7 +27,7 @@ public abstract class PlayerListMixin {
             slice = @Slice(
                     to = @At(
                             value = "INVOKE",
-                            target = "Lnet/minecraft/server/ServerScoreboard;getDisplayObjective(I)Lnet/minecraft/world/scores/Objective;"
+                            target = "Lnet/minecraft/server/ServerScoreboard;getDisplayObjective(Lnet/minecraft/world/scores/DisplaySlot;)Lnet/minecraft/world/scores/Objective;"
                     )
             )
     )
@@ -34,8 +35,15 @@ public abstract class PlayerListMixin {
         // no-op
     }
 
-    @Inject(method = "placeNewPlayer", at = @At(value = "INVOKE", target = "Ljava/util/Map;put(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;", shift = At.Shift.AFTER))
-    public void orderedPlayerList_onPutPlayer(Connection connection, ServerPlayer player, CallbackInfo ci) {
+    @Inject(
+        method = "placeNewPlayer",
+        at = @At(
+            value = "INVOKE",
+            target = "Ljava/util/Map;put(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;",
+            shift = At.Shift.AFTER
+        )
+    )
+    public void orderedPlayerList_onPutPlayer(Connection connection, ServerPlayer player, CommonListenerCookie cookie, CallbackInfo ci) {
         OrderedPlayerListManager.MANAGER.onJoin(player);
     }
 
