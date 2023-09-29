@@ -91,7 +91,7 @@ This mod sends fake vanilla teams to the players in order to manipulate the disp
 
 | Meta Key       	        | Description                                                                                                  	                                      | Default 	  |
 |-------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------|------------|
-| color          	        | This is used for glow and nametag color (use [Color Codes](https://minecraft.fandom.com/wiki/Formatting_codes#Color_codes)) 	                       | `reset` 	  |
+| color          	        | This is used for glow and nametag color (use [Color Codes](https://minecraft.wiki/w/Formatting_codes#Color_codes)) 	                       | `reset` 	  |
 | collision      	        | Player collisions are calculated client side, if you wish to disable player collisions, set this to `false`  	                                      | `true`  	  |
 | nameTagVisible 	        | Whether or not nametags should be displayed above the player                                                 	                                      | `true`  	  |
 | seeFriendlyInvisibles 	 | When enabled players render themselves transparent, when they have the invisibility status effect                                                 	 | `false`  	 |
