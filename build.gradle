@@ -1,5 +1,5 @@
 plugins {
-    id 'fabric-loom' version '1.0-SNAPSHOT'
+    id 'fabric-loom' version '1.6-SNAPSHOT'
     id 'maven-publish'
 }
 
@@ -8,7 +8,6 @@ group = project.maven_group
 
 repositories {
     maven { url 'https://oss.sonatype.org/content/repositories/snapshots' } // fabric-permissions-api
-    maven { url 'https://jitpack.io' } // MixinExtras
     maven { url "https://maven.nucleoid.xyz/" } // placeholder-api
 }
 
@@ -17,8 +16,6 @@ dependencies {
     minecraft "com.mojang:minecraft:${project.minecraft_version}"
     mappings loom.officialMojangMappings()
     modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
-
-    include(implementation(annotationProcessor("com.github.llamalad7.mixinextras:mixinextras-fabric:${project.mixin_extras_version}")))
 
     modImplementation include("me.lucko:fabric-permissions-api:${project.permission_api_version}")
     modImplementation include("eu.pb4:placeholder-api:${project.placeholder_api_version}")
@@ -43,7 +40,7 @@ processResources {
     }
 }
 
-def targetJavaVersion = 17
+def targetJavaVersion = 21
 tasks.withType(JavaCompile).configureEach {
     // ensure that the encoding is set to UTF-8, no matter what the system default is
     // this fixes some edge cases with special characters not displaying correctly
