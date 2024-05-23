@@ -8,7 +8,7 @@ import org.jetbrains.annotations.NotNull;
 
 public class MetadataSequence extends AbstractSequence {
 
-    public static final ResourceLocation ID = new ResourceLocation("metadata");
+    public static final ResourceLocation ID = ResourceLocation.withDefaultNamespace("metadata");
     private final String key;
 
     public MetadataSequence(@NotNull String key, boolean reversed, ComparisonMode<?> mode) {

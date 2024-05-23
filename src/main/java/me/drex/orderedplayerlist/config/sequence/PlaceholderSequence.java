@@ -10,7 +10,7 @@ import org.jetbrains.annotations.Nullable;
 
 public class PlaceholderSequence extends AbstractSequence {
 
-    public static final ResourceLocation ID = new ResourceLocation("placeholder");
+    public static final ResourceLocation ID = ResourceLocation.withDefaultNamespace("placeholder");
     private final ResourceLocation placeholder;
     private final String argument;
 
