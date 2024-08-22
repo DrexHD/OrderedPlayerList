@@ -5,8 +5,7 @@
   "compatibilityLevel": "JAVA_17",
   "mixins": [
     "PlayerListMixin",
-    "PlayerTeamMixin",
-    "ServerScoreboardMixin"
+    "ServerPlayerMixin"
   ],
   "injectors": {
     "defaultRequire": 1

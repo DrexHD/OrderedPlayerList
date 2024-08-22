@@ -5,10 +5,6 @@
 {
   // Every how many ticks order changes should be checked and updated
   "updateRate": 5,
-  // Display prefix metadata above the player
-  "displayPrefix": true,
-  // Display suffix metadata above the player
-  "displaySuffix": true,
   // A list of comparisons, applied top to bottom.
   // In this example, rank weight will be checked first, then people with same rank weight will be sorted by playtime...
   "order": [
@@ -84,21 +80,3 @@ Allows for player comparison using [placeholders](https://placeholders.pb4.eu/us
   "type": "placeholder"
 }
 ```
-
-
-## Features
-This mod sends fake vanilla teams to the players in order to manipulate the displayed player list order. If you are using teams to change player collisions, nametag / glow color or nameTagVisibility you can use [meta keys](https://luckperms.net/wiki/Meta-Commands) to replicate this behaviour.
-
-| Meta Key       	        | Description                                                                                                  	                                      | Default 	  |
-|-------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------|------------|
-| color          	        | This is used for glow and nametag color (use [Color Codes](https://minecraft.wiki/w/Formatting_codes#Color_codes)) 	                       | `reset` 	  |
-| collision      	        | Player collisions are calculated client side, if you wish to disable player collisions, set this to `false`  	                                      | `true`  	  |
-| nameTagVisible 	        | Whether or not nametags should be displayed above the player                                                 	                                      | `true`  	  |
-| seeFriendlyInvisibles 	 | When enabled players render themselves transparent, when they have the invisibility status effect                                                 	 | `false`  	 |
-| prefix 	                | Team prefix used for nametag rendering                                                 	                                                            | `""`  	    |
-| suffix 	                | Team suffix used for nametag rendering                                                 	                                                            | `""`  	    |
-
-
-## Limitations
-- Some features from custom teams, that are being calculated by the client (glow color, collisions, nametag visibility) may not work properly (see [Features](#features))
-- Players in spectator mode will always be displayed at the bottom of the list
