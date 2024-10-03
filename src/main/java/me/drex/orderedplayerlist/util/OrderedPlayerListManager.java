@@ -27,10 +27,10 @@ public class OrderedPlayerListManager {
         List<ServerPlayer> players = playerList.getPlayers();
         players = new ArrayList<>(players);
         players.sort(Config.INSTANCE.order.comparator());
-        int tabListOrder = 0;
+        int tabListOrder = players.size();
         for (ServerPlayer player : players) {
             ((IServerPlayer) player).orderedPlayerList$setTabListOrder(tabListOrder);
-            tabListOrder++;
+            tabListOrder--;
         }
         if (sendPacket) {
             playerList.broadcastAll(new ClientboundPlayerInfoUpdatePacket(EnumSet.of(ClientboundPlayerInfoUpdatePacket.Action.UPDATE_LIST_ORDER), players));
