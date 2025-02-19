@@ -15,7 +15,7 @@ public class OrderedPlayerList implements DedicatedServerModInitializer {
     @Override
     public void onInitializeServer() {
         ConfigManager.load();
-        OrderedPlayerListManager.MANAGER.init();
+        OrderedPlayerListManager.init();
         CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) -> OrderedPlayerListCommand.register(dispatcher));
     }
 

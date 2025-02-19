@@ -10,6 +10,8 @@ import net.minecraft.world.scores.PlayerTeam;
 import net.minecraft.world.scores.Scoreboard;
 import net.minecraft.world.scores.Team;
 
+import java.util.UUID;
+
 /**
  * This is a dummy class for teams used in {@link OrderedPlayerListManager}
  * to allow for fake team packets, which don't interfere with
@@ -19,10 +21,13 @@ import net.minecraft.world.scores.Team;
  */
 public class DummyTeam extends PlayerTeam {
 
+    public final UUID player;
+
     public DummyTeam(ServerPlayer player, long weight) {
         super(null, String.format("%019d", weight));
         getPlayers().add(player.getScoreboardName());
         update(player);
+        this.player = player.getUUID();
     }
 
     @Override
