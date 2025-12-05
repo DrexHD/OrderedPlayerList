@@ -14,10 +14,10 @@ public class Config {
 
     public PlayerComparator order = new PlayerComparator(new ArrayList<>() {{
         add(new MetadataSequence("weight", true, ComparisonMode.INTEGER));
-//        add(new PlaceholderSequence(new ResourceLocation("player:statistic"), "play_time", true, ComparisonMode.INTEGER));
-//        add(new PlaceholderSequence(new ResourceLocation("player:pos_y"), null, false, ComparisonMode.DOUBLE));
-//        add(new PlaceholderSequence(new ResourceLocation("player:statistic"), "deaths", false, ComparisonMode.INTEGER));
-//        add(new PlaceholderSequence(new ResourceLocation("player:name"), null, false, ComparisonMode.STRING));
+//        add(new PlaceholderSequence(new Identifier("player:statistic"), "play_time", true, ComparisonMode.INTEGER));
+//        add(new PlaceholderSequence(new Identifier("player:pos_y"), null, false, ComparisonMode.DOUBLE));
+//        add(new PlaceholderSequence(new Identifier("player:statistic"), "deaths", false, ComparisonMode.INTEGER));
+//        add(new PlaceholderSequence(new Identifier("player:name"), null, false, ComparisonMode.STRING));
     }});
 
 }

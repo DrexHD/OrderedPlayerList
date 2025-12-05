@@ -11,7 +11,7 @@ import me.drex.orderedplayerlist.util.serializer.ComparisonModeSerializer;
 import me.drex.orderedplayerlist.util.serializer.PlayerComparatorSerializer;
 import me.drex.orderedplayerlist.util.serializer.SequenceSerializer;
 import net.fabricmc.loader.api.FabricLoader;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 import java.lang.reflect.Type;
 import java.nio.file.Files;
@@ -26,7 +26,7 @@ public class ConfigManager {
         .registerTypeAdapter(PlayerComparator.class, new PlayerComparatorSerializer())
         .registerTypeAdapter(ComparisonMode.class, new ComparisonModeSerializer())
         .registerTypeAdapter(Sequence.class, SequenceSerializer.INSTANCE)
-        .registerTypeHierarchyAdapter(ResourceLocation.class, new RegistryUnawareCodecSerializer<>(ResourceLocation.CODEC))
+        .registerTypeHierarchyAdapter(Identifier.class, new RegistryUnawareCodecSerializer<>(Identifier.CODEC))
         .create();
     private static final Path CONFIG_FILE = FabricLoader.getInstance().getConfigDir().resolve("ordered-playerlist.json");
 

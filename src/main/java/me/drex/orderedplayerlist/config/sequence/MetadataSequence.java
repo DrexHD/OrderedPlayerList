@@ -2,13 +2,13 @@ package me.drex.orderedplayerlist.config.sequence;
 
 import me.drex.orderedplayerlist.config.sequence.util.ComparisonMode;
 import me.lucko.fabric.api.permissions.v0.Options;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerPlayer;
 import org.jetbrains.annotations.NotNull;
 
 public class MetadataSequence extends AbstractSequence {
 
-    public static final ResourceLocation ID = ResourceLocation.withDefaultNamespace("metadata");
+    public static final Identifier ID = Identifier.withDefaultNamespace("metadata");
     private final String key;
 
     public MetadataSequence(@NotNull String key, boolean reversed, ComparisonMode<?> mode) {
