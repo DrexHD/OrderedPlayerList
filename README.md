@@ -42,6 +42,7 @@
       "placeholder": "player:name",
       "reversed": false,
       "mode": "string",
+      "ignoreCase": true,
       "type": "placeholder"
     }
   ]
