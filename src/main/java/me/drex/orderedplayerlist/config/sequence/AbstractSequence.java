@@ -9,6 +9,7 @@ public abstract class AbstractSequence implements Sequence {
 
     private final boolean reversed;
     private final ComparisonMode<?> mode;
+    private final boolean ignoreCase = false;
 
     public AbstractSequence(boolean reversed, ComparisonMode<?> mode) {
         this.reversed = reversed;
@@ -17,7 +18,13 @@ public abstract class AbstractSequence implements Sequence {
 
     @Override
     public Comparator<ServerPlayer> comparator() {
-        Comparator<ServerPlayer> comparator = Comparator.comparing(player -> mode.getComparable(getStringRepresentation(player)));
+        Comparator<ServerPlayer> comparator = Comparator.comparing(player -> {
+            String stringRepresentation = getStringRepresentation(player);
+            if (ignoreCase) {
+                stringRepresentation = stringRepresentation.toLowerCase();
+            }
+            return mode.getComparable(stringRepresentation);
+        });
         if (reversed) comparator = comparator.reversed();
         return comparator;
     }

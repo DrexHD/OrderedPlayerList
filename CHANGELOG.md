@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.6] - 2025-12-05
+### Added
+- `ignoreCase` comparison option
+
 ## [0.1.4] - 2024-09-26
 ### Changed
 - Reduced complexity of the default config
