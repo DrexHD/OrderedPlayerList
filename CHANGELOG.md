@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.7] - 2026-05-02
+### Fixed
+- Bundled `fabric-permissions-api-v0` version
+
 ## [0.1.6] - 2025-12-05
 ### Added
 - `ignoreCase` comparison option
