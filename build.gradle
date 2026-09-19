@@ -3,7 +3,7 @@ import org.jetbrains.changelog.Changelog
 plugins {
     id 'net.fabricmc.fabric-loom' version '1.17-SNAPSHOT'
     id 'maven-publish'
-    id "me.modmuss50.mod-publish-plugin" version "1.1.0"
+    id "me.modmuss50.mod-publish-plugin" version "2.2.0"
     id 'org.jetbrains.changelog' version '2.+'
 }
 
@@ -52,6 +52,8 @@ publishMods {
         accessToken = providers.environmentVariable("CURSEFORGE_TOKEN")
         projectId = "903940"
         minecraftVersions.add(project.curseforge_minecraft_version)
+	client = true
+	server = true
     }
     modrinth {
         accessToken = providers.environmentVariable("MODRINTH_TOKEN")
@@ -60,8 +62,8 @@ publishMods {
     }
     github {
         accessToken = providers.environmentVariable("GITHUB_TOKEN")
-        repository = providers.environmentVariable("GITHUB_REPOSITORY").getOrElse("DrexHD/dryrun")
-        commitish = providers.environmentVariable("GITHUB_REF_NAME").getOrElse("dryrun")
+        repository = providers.environmentVariable("GITHUB_REPOSITORY").getOrElse("DrexHD/OrderedPlayerList")
+        commitish = providers.environmentVariable("GITHUB_REF_NAME").getOrElse("main")
     }
 }
 
